@@ -3,7 +3,8 @@
 name: CI
 
 on:
-    push:
+    repository_dispatch:
+      types: [test_result]
       branches:
       - terraform_test
       - master
