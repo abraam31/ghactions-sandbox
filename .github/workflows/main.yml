@@ -26,9 +26,7 @@ jobs:
         
       # Runs a single command using the runners shell
       - name: print event 
-        env:
-          MESSAGE: $github.event
-        run: echo $MESSAGE
+        run: cat $GITHUB_EVENT_PATH
 
       - name: Run a one-line script
         run: echo Hello, world!!
