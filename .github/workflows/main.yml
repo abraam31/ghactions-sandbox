@@ -6,8 +6,7 @@ on:
     repository_dispatch:
       types: [test_result]
       branches:
-      - terraform_test
-      - master
+      - ${{ github.event.client_payload.branch }}
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
