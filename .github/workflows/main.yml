@@ -21,10 +21,13 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      - name: Run a one-line script
+        run: printenv
+        
       # Runs a single command using the runners shell
       - name: print event 
         env:
-          MESSAGE: ${{ github.event }}
+          MESSAGE: $github.event
         run: echo $MESSAGE
 
       - name: Run a one-line script
