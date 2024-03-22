@@ -20,9 +20,13 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
+        env:
+          BRANCH: ${{ github.event.client_payload.branch_ref }}
+        with:
+          ref: $BRANCH
 
       - name: Run a one-line script
-        run: printenv
+        run: printenv; tail -5 Jenkinsfile
         
       # Runs a single command using the runners shell
       - name: print event 
