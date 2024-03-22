@@ -22,13 +22,12 @@ jobs:
       - uses: actions/checkout@v3
         env:
           BRANCH: ${{ github.event.client_payload.branch_ref }}
-        with:
-          ref: "$BRANCH"
+
 
       - name: Run a one-line script
         env:
           BRANCH: ${{ github.event.client_payload.branch_ref }}
-        run: echo $BRANCH; printenv; tail -5 Jenkinsfile
+        run: tail -5 Jenkinsfile; git pull; git checkout $BRANCH; tail -5 Jenkinsfile
         
       # Runs a single command using the runners shell
       - name: print event 
