@@ -16,17 +16,28 @@ jobs:
     runs-on: test
     steps:
       - name: Define variables
+        id: vardef
         run: |
           if  [[ "${{ github.event.client_payload.branch_ref }}" -eq "master" ]]; then
-            echo "varfile=prod.tfvars" >> $GITHUB_ENV
+            echo "varfile=prod.tfvars" >> $GITHUB_OUTPUT
+            echo "host=master" >> $GITHUB_OUTPUT
           else
-            echo "varfile=sandbox.tfvars" >> $GITHUB_ENV
+            echo "varfile=sandbox.tfvars" >> $GITHUB_OUTPUT
+            echo "host=test" >> $GITHUB_OUTPUT
           fi
-          
+    outputs:
+      output1: ${{ steps.vardef.outputs.varfile }}
+      output2: ${{ steps.vardef.outputs.host }}
+
   build:
     # The type of runner that the job will run on
+    needs: variables-definitions
     runs-on: test
-    if: github.event.client_payload.branch_ref != 'master'
+    # if: github.event.client_payload.branch_ref != 'master'
+    env:
+      VARFILE: ${{ needs.variables-definitions.outputs.varfile }}
+      HOST: ${{ needs.variables-definitions.outputs.host }}
+      BRANCH: ${{ github.event.client_payload.branch_ref }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -40,27 +51,27 @@ jobs:
         
       - name: Run sandbox echo
         run: |
-          echo "This is not master.. you can fuck around !!"
-          echo $varfile
-          echo $GITHUB_ENV
+          echo "This is ${{ github.event.client_payload.branch_ref }}"
+          echo $VARFILE
+          echo $HOST
 
-  master-build:
-    # The type of runner that the job will run on
-    runs-on: test
-    if: github.event.client_payload.branch_ref == 'master'
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.client_payload.branch_ref }}
+  # master-build:
+  #   # The type of runner that the job will run on
+  #   runs-on: test
+  #   if: github.event.client_payload.branch_ref == 'master'
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #       with:
+  #         fetch-depth: 0
+  #         ref: ${{ github.event.client_payload.branch_ref }}
 
-      - name: Run a one-line script
-        env:
-          BRANCH: ${{ github.event.client_payload.branch_ref }}
-        run: echo $BRANCH; tail -5 Jenkinsfile
+  #     - name: Run a one-line script
+  #       env:
+  #         BRANCH: ${{ github.event.client_payload.branch_ref }}
+  #       run: echo $BRANCH; tail -5 Jenkinsfile
         
-      - name: Run master echo
-        run: |
-          echo "This is master.. you nailed it !!"
-          echo $varfile
-          echo $GITHUB_ENV
+  #     - name: Run master echo
+  #       run: |
+  #         echo "This is master.. you nailed it !!"
+  #         echo $varfile
+  #         echo $GITHUB_ENV
