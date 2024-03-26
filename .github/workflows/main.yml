@@ -17,7 +17,7 @@ jobs:
     steps:
       - name: Define variables
         run: |
-          if  ${{ github.event.client_payload.branch_ref }}; then
+          if  [[ "${{ github.event.client_payload.branch_ref }}" -eq "master" ]]; then
             echo "varfile=prod.tfvars" >> $GITHUB_ENV
           else
             echo "varfile=sandbox.tfvars" >> $GITHUB_ENV
