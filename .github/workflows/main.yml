@@ -48,4 +48,4 @@ jobs:
         
       - name: Run master echo
         run: |
-          This is master.. you nailed it !!         
+          echo "This is master.. you nailed it !!"
