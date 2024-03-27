@@ -4,15 +4,13 @@ name: CI
 
 on:
     repository_dispatch:
-      types: [test_result]
-      branches:
-      - master
-      - terraform_test
+      types: [trigger]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   variables-definitions:
     # The type of runner that the job will run on
+    if: ${{ contains(fromJSON('["master", "actions"]'), github.event.client_payload.branch_ref) }}
     runs-on: test
     steps:
       - name: Define variables
@@ -32,46 +30,27 @@ jobs:
   build:
     # The type of runner that the job will run on
     needs: variables-definitions
-    runs-on: test
+    env:
+      VARFILE: ${{needs.variables-definitions.outputs.varfile}}
+      HOST: ${{needs.variables-definitions.outputs.host}}
+      BRANCH_REF: ${{ github.event.client_payload.branch_ref }}
+    runs-on: ${{needs.variables-definitions.outputs.host}}
     steps:
       - uses: actions/checkout@v4
         with:
             fetch-depth: 0
-            ref: ${{ github.event.client_payload.branch_ref }}
+            ref: "${{ env.BRANCH_REF }}"
 
       - name: Run a one-line script
         env:
-          BRANCH: ${{ github.event.client_payload.branch_ref }}
+          BRANCH: "${{ env.BRANCH_REF }}"
         run: echo $BRANCH; tail -5 Jenkinsfile
         
       - name: Run sandbox echo
-        env:
-          VARFILE: ${{needs.variables-definitions.outputs.varfile}}
-          HOST: ${{needs.variables-definitions.outputs.host}}
-          BRANCH: ${{ github.event.client_payload.branch_ref }}
         run: |
-          echo "This is ${{ github.event.client_payload.branch_ref }}"
-          echo $VARFILE
+          echo $GITHUB_CONTEXT
+          echo "This is ${{ env.BRANCH_REF }}" > $VARFILE
+          ls -l $VARFILE
+          cat $VARFILE
           echo $HOST
           
-  # if: github.event.client_payload.branch_ref != 'master'
-  # master-build:
-  #   # The type of runner that the job will run on
-  #   runs-on: test
-  #   if: github.event.client_payload.branch_ref == 'master'
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
-  #         ref: ${{ github.event.client_payload.branch_ref }}
-
-  #     - name: Run a one-line script
-  #       env:
-  #         BRANCH: ${{ github.event.client_payload.branch_ref }}
-  #       run: echo $BRANCH; tail -5 Jenkinsfile
-        
-  #     - name: Run master echo
-  #       run: |
-  #         echo "This is master.. you nailed it !!"
-  #         echo $varfile
-  #         echo $GITHUB_ENV
