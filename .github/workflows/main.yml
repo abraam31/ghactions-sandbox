@@ -33,16 +33,11 @@ jobs:
     # The type of runner that the job will run on
     needs: variables-definitions
     runs-on: test
-    # if: github.event.client_payload.branch_ref != 'master'
-    env:
-      VARFILE: ${{ needs.variables-definitions.outputs.varfile }}
-      HOST: ${{ needs.variables-definitions.outputs.host }}
-      BRANCH: ${{ github.event.client_payload.branch_ref }}
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0
-          ref: ${{ github.event.client_payload.branch_ref }}
+            fetch-depth: 0
+            ref: ${{ github.event.client_payload.branch_ref }}
 
       - name: Run a one-line script
         env:
@@ -50,11 +45,16 @@ jobs:
         run: echo $BRANCH; tail -5 Jenkinsfile
         
       - name: Run sandbox echo
+        env:
+          VARFILE: ${{ needs.variables-definitions.outputs.varfile }}
+          HOST: ${{ needs.variables-definitions.outputs.host }}
+          BRANCH: ${{ github.event.client_payload.branch_ref }}
         run: |
           echo "This is ${{ github.event.client_payload.branch_ref }}"
           echo $VARFILE
           echo $HOST
-
+          
+  # if: github.event.client_payload.branch_ref != 'master'
   # master-build:
   #   # The type of runner that the job will run on
   #   runs-on: test
