@@ -18,7 +18,7 @@ jobs:
       - name: Define variables
         id: vardef
         run: |
-          if  [[ "${{ github.event.client_payload.branch_ref }}" -eq "master" ]]; then
+          if  [[ "${{ github.event.client_payload.branch_ref }}" == "master" ]]; then
             echo "varfile=prod.tfvars" >> $GITHUB_OUTPUT
             echo "host=master" >> $GITHUB_OUTPUT
           else
