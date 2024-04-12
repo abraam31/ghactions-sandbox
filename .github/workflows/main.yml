@@ -1,7 +1,7 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
-
+name: CI 
+run-name: ${{ github.actor }} pipeline
 on:
     repository_dispatch:
       types: [trigger]
@@ -16,6 +16,7 @@ jobs:
       - name: Define variables
         id: vardef
         run: |
+          printenv
           if  [[ "${{ github.event.client_payload.branch_ref }}" == "master" ]]; then
             echo "varfile=prod.tfvars" >> $GITHUB_OUTPUT
             echo "host=master" >> $GITHUB_OUTPUT
