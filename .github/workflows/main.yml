@@ -4,7 +4,7 @@ name: CI
 run-name: Sandbox pipeline - Branch `${{ github.event.client_payload.branch_ref }}` - On `${{ github.event.client_payload.time }}` - Run by `${{ github.actor }}`
 on:
     repository_dispatch:
-      types: [trigger]
+      types: [travis_trigger]
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
