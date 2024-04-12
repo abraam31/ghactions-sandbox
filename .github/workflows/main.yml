@@ -1,7 +1,7 @@
 # This is a basic workflow to help you get started with Actions
 
 name: CI 
-run-name: Sandbox pipeline - `${{ github.event.client_payload.branch_ref }}` - On ${{ github.event.client_payload.time }} - By ${{ github.actor }}
+run-name: Sandbox pipeline - Branch `${{ github.event.client_payload.branch_ref }}` - On `${{ github.event.client_payload.time }}` - Run by `${{ github.actor }}`
 on:
     repository_dispatch:
       types: [trigger]
