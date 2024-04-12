@@ -5,6 +5,7 @@ run-name: Sandbox pipeline - Branch `${{ github.event.client_payload.branch_ref 
 on:
     repository_dispatch:
       types: [travis_trigger]
+    workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
