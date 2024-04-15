@@ -1,10 +1,10 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Prod 
-run-name: Prod pipeline - Branch `${{ github.event.client_payload.branch_ref }}` - On `${{ github.event.client_payload.time }}` - Commit `${{ github.event.client_payload.commit }}` Run by `${{ github.actor }}`
+name: Sandbox 
+run-name: Sandbox pipeline - Branch `${{ github.event.client_payload.branch_ref }}` - On `${{ github.event.client_payload.time }}` - Commit `${{ github.event.client_payload.commit }}` Run by `${{ github.actor }}`
 on:
     repository_dispatch:
-      types: [master_trigger]
+      types: [travis_trigger]
     workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -29,7 +29,7 @@ jobs:
       varfile: ${{ steps.vardef.outputs.varfile }}
       host: ${{ steps.vardef.outputs.host }}
 
-  master-build:
+  build:
     # The type of runner that the job will run on
     needs: variables-definitions
     env:
@@ -37,7 +37,6 @@ jobs:
       HOST: ${{needs.variables-definitions.outputs.host}}
       BRANCH_REF: ${{ github.event.client_payload.branch_ref }}
     runs-on: ${{needs.variables-definitions.outputs.host}}
-    environment: prod
     steps:
       - uses: actions/checkout@v4
         with:
@@ -48,7 +47,7 @@ jobs:
         env:
           BRANCH: "${{ env.BRANCH_REF }}"
         run: echo $BRANCH; tail -5 Jenkinsfile
-
+        
       - name: Run sandbox echo
         run: |
           echo $GITHUB_CONTEXT
