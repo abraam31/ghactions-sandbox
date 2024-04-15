@@ -37,6 +37,7 @@ jobs:
       HOST: ${{needs.variables-definitions.outputs.host}}
       BRANCH_REF: ${{ github.event.client_payload.branch_ref }}
     runs-on: ${{needs.variables-definitions.outputs.host}}
+    if: ${{ contains(fromJSON('["actions"]'), github.event.client_payload.branch_ref) }}
     steps:
       - uses: actions/checkout@v4
         with:
