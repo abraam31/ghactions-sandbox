@@ -5,8 +5,6 @@ run-name: Sandbox pipeline - Branch `${{ github.event.client_payload.branch_ref 
 on:
     repository_dispatch:
       types: [travis_trigger]
-      branches:
-        - '!master'
     workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -22,7 +20,7 @@ jobs:
           printenv
           if  [[ "${{ github.event.client_payload.branch_ref }}" == "master" ]]; then
             echo "varfile=prod.tfvars" >> $GITHUB_OUTPUT
-            echo "host=master" >> $GITHUB_OUTPUT
+            echo "host=test" >> $GITHUB_OUTPUT
           else
             echo "varfile=sandbox.tfvars" >> $GITHUB_OUTPUT
             echo "host=test" >> $GITHUB_OUTPUT
@@ -57,4 +55,23 @@ jobs:
           ls -l $VARFILE
           cat $VARFILE
           echo $HOST
-          
+
+  master-build:
+    # The type of runner that the job will run on
+    needs: variables-definitions
+    env:
+      VARFILE: ${{needs.variables-definitions.outputs.varfile}}
+      HOST: ${{needs.variables-definitions.outputs.host}}
+      BRANCH_REF: ${{ github.event.client_payload.branch_ref }}
+    runs-on: ${{needs.variables-definitions.outputs.host}}
+    environment: prod
+    steps:
+      - uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
+            ref: "${{ env.BRANCH_REF }}"
+
+      - name: Run a one-line script
+        env:
+          BRANCH: "${{ env.BRANCH_REF }}"
+        run: echo $BRANCH; tail -5 Jenkinsfile
