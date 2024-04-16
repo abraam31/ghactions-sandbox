@@ -1,23 +1,25 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Test 
-run-name: Prod pipeline - Branch `${{ github.event.client_payload.branch_ref }}` - On `${{ github.event.client_payload.time }}` - Commit `${{ github.event.client_payload.commit }}` Run by `${{ github.actor }}`
+name: Prod 
+run-name: Prod pipeline - Branch `${{ github.event.client_payload.branch_ref }}` - On `${{ github.event.client_payload.time }}` - Commit `${{ github.sha }}`
 on:
     repository_dispatch:
       types: [master_trigger]
     workflow_dispatch:
+      
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   variables-definitions:
     # The type of runner that the job will run on
-    if: ${{ contains(fromJSON('["master", "actions"]'), github.event.client_payload.branch_ref) }} || ${{ contains(fromJson('["refs/heads/master"]'), github.ref) }}
+    if: ${{ contains(fromJSON('["master", "actions"]'), github.event.client_payload.branch_ref) || github.ref == 'refs/heads/master' }}
     runs-on: test
     steps:
       - name: Define variables
         id: vardef
         run: |
-          printenv
+          if [ -x "${{ github.event.client_payload.branch_ref }}"]; then echo "From Dispatch"; else echo "Manual!"; fi 
+          echo ${{ github.ref }}
           if  [[ "${{ github.ref }}" == "master" ]]; then
             echo "varfile=prod.tfvars" >> $GITHUB_OUTPUT
             echo "host=test" >> $GITHUB_OUTPUT
@@ -37,7 +39,7 @@ jobs:
       HOST: ${{needs.variables-definitions.outputs.host}}
       BRANCH_REF: ${{ github.event.client_payload.branch_ref }}
     runs-on: ${{needs.variables-definitions.outputs.host}}
-    environment: prod
+    environment: test
     steps:
       - uses: actions/checkout@v4
         with:
