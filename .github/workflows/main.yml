@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: Prod 
+name: Test 
 run-name: Prod pipeline - Branch `${{ github.event.client_payload.branch_ref }}` - On `${{ github.event.client_payload.time }}` - Commit `${{ github.event.client_payload.commit }}` Run by `${{ github.actor }}`
 on:
     repository_dispatch:
@@ -11,7 +11,7 @@ on:
 jobs:
   variables-definitions:
     # The type of runner that the job will run on
-    if: ${{ contains(fromJSON('["master", "actions"]'), github.event.client_payload.branch_ref) }}
+    if: ${{ contains(fromJSON('["master", "actions"]'), github.event.client_payload.branch_ref) }} || ${{ contains(fromJson('["refs/heads/master"]'), github.ref) }}
     runs-on: test
     steps:
       - name: Define variables
