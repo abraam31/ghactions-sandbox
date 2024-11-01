@@ -7,7 +7,7 @@ on:
       types: [travis_trigger]
     workflow_dispatch:
       inputs: 
-        name:
+        commit:
           type: string
           description: which commit to deploy
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
@@ -52,11 +52,12 @@ jobs:
       
       - name: test inputs
         run: |
-          if  [[ "${{ inputs.name }}" ]]; then 
-            echo "Input defined!"
+          if  [[ "${{ inputs.commit }}" ]]; then 
+            TAG="${{ inputs.commit }}"
           else
-            echo "Nothing is working."
+            TAG=$(git rev-parse --short HEAD)
           fi
+          echo $TAG
           
       - name: Run sandbox echo
         run: |
