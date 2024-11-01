@@ -49,7 +49,15 @@ jobs:
         env:
           BRANCH: "${{ env.BRANCH_REF }}"
         run: echo $BRANCH; tail -5 Jenkinsfile
-        
+      
+      - name: test inputs
+        run: |
+          if  [[ "${{ inputs.name }}" ]]; then 
+            echo "Input defined!"
+          else
+            echo "Nothing is working."
+          fi
+          
       - name: Run sandbox echo
         run: |
           echo $GITHUB_CONTEXT
