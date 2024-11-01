@@ -6,7 +6,10 @@ on:
     repository_dispatch:
       types: [travis_trigger]
     workflow_dispatch:
-
+      inputs: 
+        name:
+          type: string
+          description: which commit to deploy
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   variables-definitions:
