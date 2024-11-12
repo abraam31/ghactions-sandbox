@@ -58,6 +58,7 @@ jobs:
             TAG=$(git rev-parse --short HEAD)
           fi
           echo $TAG
+          printenv
           
       - name: Run sandbox echo
         run: |
